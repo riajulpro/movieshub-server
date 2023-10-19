@@ -30,17 +30,17 @@ async function run() {
     // Creating a collection of database
     const moviesCollection = client.db("moviesDB").collection("movies");
 
-    // // Reading all data from Database
-    // app.get("/", (req, res) => {
-    //   res.send("Server is running...");
-    // });
+    // Reading all data from Database
+    app.get("/", (req, res) => {
+      res.send("Server is running...");
+    });
 
-    // // Reading Data from Database
-    // app.get("/products", async (req, res) => {
-    //   const cursor = moviesCollection.find();
-    //   const result = await cursor.toArray();
-    //   res.send(result);
-    // });
+    // Reading Data from Database
+    app.get("/products", async (req, res) => {
+      const cursor = moviesCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     // // Read a single data
     // app.get("/products/:id", async (req, res) => {
