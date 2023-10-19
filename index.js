@@ -42,19 +42,19 @@ async function run() {
       res.send(result);
     });
 
-    // // Read a single data
-    // app.get("/products/:id", async (req, res) => {
-    //   const query = { _id: new ObjectId(req.params.id) };
-    //   const result = await moviesCollection.findOne(query);
-    //   res.send(result);
-    // });
+    // Read a single data
+    app.get("/products/:id", async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await moviesCollection.findOne(query);
+      res.send(result);
+    });
 
-    // // Creating Data on Database
-    // app.post("/products", async (req, res) => {
-    //   const data = req.body;
-    //   const result = await moviesCollection.insertOne(data);
-    //   res.send(result);
-    // });
+    // Creating Data on Database
+    app.post("/products", async (req, res) => {
+      const data = req.body;
+      const result = await moviesCollection.insertOne(data);
+      res.send(result);
+    });
 
     // // Updating an existence data
     // app.put("/products/:id", async (req, res) => {
