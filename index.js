@@ -56,22 +56,22 @@ async function run() {
       res.send(result);
     });
 
-    // // Updating an existence data
-    // app.put("/products/:id", async (req, res) => {
-    //   const filter = { _id: new ObjectId(req.params.id) };
-    //   const options = { upsert: true };
-    //   const updateDoc = {
-    //     $set: req.body,
-    //   };
+    // Updating an existence data
+    app.put("/products/:id", async (req, res) => {
+      const filter = { _id: new ObjectId(req.params.id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: req.body,
+      };
 
-    //   const result = await moviesCollection.updateOne(
-    //     filter,
-    //     updateDoc,
-    //     options
-    //   );
+      const result = await moviesCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
 
-    //   res.send(result);
-    // });
+      res.send(result);
+    });
 
     // // Deleting specific data from database
     // app.delete("/products/:id", async (req, res) => {
