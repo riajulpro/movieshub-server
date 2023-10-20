@@ -29,30 +29,60 @@ async function run() {
 
     // Creating a collection of database
     const moviesCollection = client.db("moviesDB").collection("movies");
+    const brandsDB = client.db("brands").collection("allBrands");
+    const myCart = client.db("myCartDB").collection("userCart");
 
     // Reading all data from Database
     app.get("/", (req, res) => {
       res.send("Server is running...");
     });
 
-    // Reading Data from Database
+    // Reading Data from Database || Products
     app.get("/products", async (req, res) => {
       const cursor = moviesCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
 
-    // Read a single data
+    // My Cart Data Reading || Cart
+    app.get("/myCart", async (req, res) => {
+      const cursor = myCart.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // Reading Data from Database || Brands
+    app.get("/brands", async (req, res) => {
+      const cursor = brandsDB.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // Read a single data || Single Product
     app.get("/products/:id", async (req, res) => {
       const query = { _id: new ObjectId(req.params.id) };
       const result = await moviesCollection.findOne(query);
       res.send(result);
     });
 
-    // Creating Data on Database
+    // Get single data of cart
+    app.get("/myCart/:id", async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await myCart.findOne(query);
+      res.send(result);
+    });
+
+    // Creating Data on Database || POST
     app.post("/products", async (req, res) => {
       const data = req.body;
       const result = await moviesCollection.insertOne(data);
+      res.send(result);
+    });
+
+    // Adding Cart Data
+    app.post("/myCart", async (req, res) => {
+      const data = req.body;
+      const result = await myCart.insertOne(data);
       res.send(result);
     });
 
@@ -77,6 +107,13 @@ async function run() {
     app.delete("/products/:id", async (req, res) => {
       const query = { _id: new ObjectId(req.params.id) };
       const result = await moviesCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // Deleting cart data
+    app.delete("/my_cart/:id", async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await myCart.deleteOne(query);
       res.send(result);
     });
 
