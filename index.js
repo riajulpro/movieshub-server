@@ -1,14 +1,26 @@
 // Importing the require data
 const express = require("express");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+require("dotenv").config();
 const port = process.env.PORT || 5000;
 const app = express();
-require("dotenv").config();
 
-// Using middle wear
-app.use(cors());
+// Using middleware
+app.use(
+  cors({
+    origin: [
+      "https://riajulpro-movieshub.surge.sh",
+      "http://localhost:5173",
+      "https://rp-assignment-10.web.app",
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
+app.use(cookieParser());
 
 // MongoDB
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qa4f7ko.mongodb.net/?retryWrites=true&w=majority`;
@@ -24,13 +36,46 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-
     // Creating a collection of database
     const moviesCollection = client.db("moviesDB").collection("movies");
     const brandsDB = client.db("brands").collection("allBrands");
     const myCart = client.db("myCartDB").collection("userCart");
+
+    // Access Token API
+    app.post("/jwt", async (req, res) => {
+      const payLoad = req.body;
+      const token = jwt.sign(payLoad, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "1h",
+      });
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          secure: false, // Only for localhost
+        })
+        .send({ success: true });
+    });
+
+    // Guard to check token
+    const verify = (req, res, next) => {
+      const savedToken = req?.cookies?.token;
+      if (!savedToken) {
+        res.status(401).send({ status: "unauthorized", code: "401" });
+        return;
+      }
+      jwt.verify(
+        savedToken,
+        process.env.ACCESS_TOKEN_SECRET,
+        (error, decode) => {
+          if (error) {
+            res.status(401).send({ status: "unauthorized", code: "401" });
+            return;
+          } else {
+            req.decode = decode;
+          }
+        }
+      );
+      next();
+    };
 
     // Reading all data from Database
     app.get("/", (req, res) => {
@@ -45,9 +90,8 @@ async function run() {
     });
 
     // My Cart Data Reading || Cart
-    app.get("/myCart", async (req, res) => {
-      const cursor = myCart.find();
-      const result = await cursor.toArray();
+    app.get("/myCart", verify, async (req, res) => {
+      const result = await myCart.find().toArray();
       res.send(result);
     });
 
