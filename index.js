@@ -90,7 +90,7 @@ async function run() {
     });
 
     // My Cart Data Reading || Cart
-    app.get("/myCart", verify, async (req, res) => {
+    app.get("/myCart", async (req, res) => {
       const result = await myCart.find().toArray();
       res.send(result);
     });
