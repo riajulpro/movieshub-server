@@ -15,6 +15,7 @@ app.use(
       "https://riajulpro-movieshub.surge.sh",
       "http://localhost:5173",
       "https://rp-assignment-10.web.app",
+      "https://movieshub-rp.netlify.app"
     ],
     credentials: true,
   })
